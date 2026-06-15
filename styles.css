@@ -1434,6 +1434,18 @@ textarea.form-control {
 
 /* Responsive Breakpoints */
 @media (max-width: 1024px) {
+    section {
+        padding: 4.5rem 0;
+    }
+
+    .nav-menu {
+        gap: 1.25rem;
+    }
+
+    .logo {
+        font-size: 1.35rem;
+    }
+
     .hero-grid {
         grid-template-columns: 1fr;
         gap: 3rem;
@@ -1508,6 +1520,18 @@ textarea.form-control {
 }
 
 @media (max-width: 768px) {
+    section {
+        padding: 3.5rem 0;
+    }
+
+    .hero-title {
+        font-size: 2.25rem;
+    }
+
+    .section-title {
+        font-size: 1.8rem;
+    }
+
     .nav-menu {
         position: fixed;
         top: 4.5rem;
@@ -1516,10 +1540,13 @@ textarea.form-control {
         height: calc(100vh - 4.5rem);
         background-color: var(--bg-dark);
         flex-direction: column;
-        justify-content: center;
+        justify-content: flex-start;
+        align-items: center;
+        padding: 3rem 0;
         gap: 2rem;
         transition: var(--transition-normal);
         z-index: 99;
+        overflow-y: auto;
     }
     
     .nav-menu.open {
@@ -1541,6 +1568,29 @@ textarea.form-control {
     .menu-toggle.open span:nth-child(3) {
         transform: rotate(-45deg) translate(5px, -6px);
     }
+
+    .visual-card-holder {
+        width: 90%;
+        height: 90%;
+        gap: 0.75rem;
+    }
+
+    .floating-mock {
+        transform: none !important;
+        padding: 0.75rem;
+    }
+
+    .mock-1 {
+        margin-right: 0;
+        align-self: center;
+        width: 100%;
+    }
+
+    .mock-2 {
+        margin-left: 0;
+        align-self: center;
+        width: 100%;
+    }
     
     .stats-row {
         grid-template-columns: 1fr;
@@ -1551,9 +1601,21 @@ textarea.form-control {
         flex-wrap: wrap;
         gap: 0.5rem;
     }
+
+    .timeline-card {
+        padding: 1.25rem;
+    }
     
     .cert-grid {
         grid-template-columns: 1fr;
+    }
+
+    .contact-form-panel {
+        padding: 1.5rem;
+    }
+
+    .contact-value {
+        word-break: break-word;
     }
     
     .form-row {
@@ -1569,5 +1631,25 @@ textarea.form-control {
     
     .footer-links {
         justify-content: center;
+    }
+}
+
+@media (max-width: 576px) {
+    .hero-btns {
+        flex-direction: column;
+        gap: 1rem;
+        width: 100%;
+        max-width: 300px;
+        margin-left: auto;
+        margin-right: auto;
+    }
+    
+    .hero-btns .btn {
+        width: 100%;
+    }
+    
+    .about-info-grid {
+        grid-template-columns: 1fr;
+        gap: 1rem;
     }
 }
