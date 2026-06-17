@@ -180,4 +180,163 @@ document.addEventListener('DOMContentLoaded', () => {
             }, 1500);
         });
     }
+
+    // --- 8. Portfolio Category Filter Logic ---
+    const workFilterButtons = document.querySelectorAll('.work-filter-btn');
+    const workCards = document.querySelectorAll('.work-card');
+    const worksGrid = document.querySelector('.works-grid');
+
+    workFilterButtons.forEach(btn => {
+        btn.addEventListener('click', () => {
+            workFilterButtons.forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            
+            const filterValue = btn.getAttribute('data-filter');
+            
+            // Dynamic grid layout adjustments for 9:16 promotional video aspect ratios
+            if (worksGrid) {
+                if (filterValue === 'promo-video') {
+                    worksGrid.classList.add('promo-active');
+                } else {
+                    worksGrid.classList.remove('promo-active');
+                }
+            }
+            
+            workCards.forEach(card => {
+                const categories = card.getAttribute('data-category').split(' ');
+                if (filterValue === 'all' || categories.includes(filterValue)) {
+                    card.style.display = 'flex';
+                    // Trigger fade in animation
+                    card.style.opacity = '0';
+                    card.style.transform = 'scale(0.95)';
+                    setTimeout(() => {
+                        card.style.opacity = '1';
+                        card.style.transform = 'scale(1)';
+                    }, 50);
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        });
+    });
+
+    // Initialize the default filter state on load
+    const activeFilterBtn = document.querySelector('.work-filter-btn.active');
+    if (activeFilterBtn) {
+        activeFilterBtn.click();
+    }
+
+    // --- 9. Portfolio Details Modal Logic ---
+    const worksModal = document.getElementById('works-modal');
+    const worksModalClose = document.getElementById('works-modal-close');
+    const worksModalOverlay = document.getElementById('works-modal-overlay');
+
+    const modalCategory = document.getElementById('modal-project-category');
+    const modalTitle = document.getElementById('modal-project-title');
+    const modalDesc = document.getElementById('modal-project-description');
+    const modalDetails = document.getElementById('modal-project-details');
+    const modalTagsContainer = document.getElementById('modal-project-tags');
+    const modalMediaContainer = document.querySelector('.works-modal-media');
+
+    const openModal = (card) => {
+        // Retrieve data fields from card attributes
+        const title = card.getAttribute('data-title');
+        const desc = card.getAttribute('data-desc');
+        const details = card.getAttribute('data-details');
+        const img = card.getAttribute('data-image');
+        const videoUrl = card.getAttribute('data-video-url');
+        const tags = card.getAttribute('data-tags') ? card.getAttribute('data-tags').split(',') : [];
+        const categoryLabel = card.querySelector('.work-category-badge').textContent;
+
+        // Clear media container first
+        modalMediaContainer.innerHTML = '';
+
+        if (videoUrl) {
+            if (videoUrl.toLowerCase().endsWith('.mp4') || videoUrl.toLowerCase().includes('.mp4')) {
+                // Render local MP4 video player
+                const videoEl = document.createElement('video');
+                videoEl.setAttribute('src', videoUrl);
+                videoEl.setAttribute('controls', 'true');
+                videoEl.setAttribute('autoplay', 'true');
+                modalMediaContainer.appendChild(videoEl);
+            } else {
+                // Render YouTube iframe (use youtube-nocookie.com and strict-origin-when-cross-origin to fix referrer issues)
+                const secureUrl = videoUrl.replace('youtube.com', 'youtube-nocookie.com');
+                const iframe = document.createElement('iframe');
+                iframe.setAttribute('src', secureUrl);
+                iframe.setAttribute('title', title);
+                iframe.setAttribute('width', '100%');
+                iframe.setAttribute('height', '100%');
+                iframe.setAttribute('frameborder', '0');
+                iframe.setAttribute('allow', 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share');
+                iframe.setAttribute('referrerpolicy', 'strict-origin-when-cross-origin');
+                iframe.setAttribute('allowfullscreen', 'true');
+                modalMediaContainer.appendChild(iframe);
+            }
+        } else {
+            // Render standard image
+            const imgEl = document.createElement('img');
+            imgEl.id = 'modal-project-img';
+            imgEl.src = img;
+            imgEl.alt = title;
+            modalMediaContainer.appendChild(imgEl);
+        }
+
+        // Populate text fields
+        modalCategory.textContent = categoryLabel;
+        modalTitle.textContent = title;
+        modalDesc.textContent = desc;
+        modalDetails.innerHTML = details;
+
+        // Render tags
+        modalTagsContainer.innerHTML = '';
+        tags.forEach(tag => {
+            const span = document.createElement('span');
+            span.className = 'project-modal-tag';
+            span.textContent = tag.trim();
+            modalTagsContainer.appendChild(span);
+        });
+
+        // Toggle Modal open classes
+        worksModal.classList.add('open');
+        worksModal.setAttribute('aria-hidden', 'false');
+        document.body.style.overflow = 'hidden'; // Disable page scrolling
+    };
+
+    const closeModal = () => {
+        worksModal.classList.remove('open');
+        worksModal.setAttribute('aria-hidden', 'true');
+        document.body.style.overflow = ''; // Re-enable page scrolling
+        
+        // Clear media container to stop any playing videos
+        setTimeout(() => {
+            modalMediaContainer.innerHTML = '';
+        }, 300);
+    };
+
+    // Attach click listeners to cards
+    workCards.forEach(card => {
+        if (card.classList.contains('video-card-direct')) {
+            return;
+        }
+        card.addEventListener('click', () => {
+            openModal(card);
+        });
+    });
+
+    // Modal close events
+    if (worksModalClose) {
+        worksModalClose.addEventListener('click', closeModal);
+    }
+    if (worksModalOverlay) {
+        worksModalOverlay.addEventListener('click', closeModal);
+    }
+
+    // Close on ESC key
+    window.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && worksModal && worksModal.classList.contains('open')) {
+            closeModal();
+        }
+    });
 });
+
